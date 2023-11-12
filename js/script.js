@@ -7,18 +7,17 @@ const remainingSpan = document.querySelector(".remaining span");
 const message = document.querySelector(".message");
 const buttonPlayAgain = document.querySelector(".play-again");
 
-const word = "magnolia";
+const word = "MAGNOLIA";
 const guessedLettersArray = [];
+const placeholderLetters = [];
 
-const placeholder = function(word){
-    const placeholderLetters = [];
+const placeholder = function(word){ 
     for(const letter in word){
         console.log(letter);
         placeholderLetters.push("●");
     }
     wordInProgress.innerText = placeholderLetters.join("");
 };
-
 placeholder(word);
 
 buttonGuess.addEventListener("click", function(e){
@@ -27,7 +26,6 @@ buttonGuess.addEventListener("click", function(e){
     if(validateInput(guess) != null){
         makeGuess(guess);
     }
-    console.log(guessedLettersArray);
     letterInput.value = "";
 });
 
@@ -46,12 +44,44 @@ const validateInput = function(letter){
 
 
 const makeGuess = function(letters){
-    console.log("masuk sini");
     letters = letters.toUpperCase();
     if (!guessedLettersArray.includes(letters)){
         guessedLettersArray.push(letters);
-        return letters;
+        updatePage();
+        wordProgress();
+        checkWin();
     }else{
         message.innerText = "You already guessed that letter. Please try again!";
+    }
+}
+
+const updatePage = function(){
+    guessedLetters.innerHTML = "";
+    for(let guessletter of guessedLettersArray){
+        let li = document.createElement("li");
+        li.innerHTML = guessletter;
+        guessedLetters.append(li);
+    }
+}
+
+const wordProgress = function(){
+    const wordArray = word.split("");
+    console.log(wordArray);
+    console.log(guessedLettersArray);
+    for(var gl of guessedLettersArray){
+        wordArray.forEach(function(l, index){
+            if (gl === l){
+                console.log(index);
+                placeholderLetters[index] = gl;
+                wordInProgress.innerText = placeholderLetters.join("");
+            }
+        })
+    }
+}
+
+const checkWin = function(){
+    if(!placeholderLetters.includes("●")){
+        message.classList.add("win");
+        message.innerHTML = '<p class="highlight">You guessed the correct word! Congrats!</p>';
     }
 }
